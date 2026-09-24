@@ -1,1 +1,410 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+<title>Amigo Secreto 2026</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<style>
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: linear-gradient(135deg, #111827, #312e81);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #111827;
+}
+
+.container {
+    width: 100%;
+    max-width: 450px;
+}
+
+.card {
+    background: white;
+    border-radius: 25px;
+    padding: 30px 25px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.3);
+    text-align: center;
+}
+
+.icon {
+    font-size: 55px;
+}
+
+h1 {
+    margin: 10px 0 5px;
+    font-size: 30px;
+}
+
+.subtitle {
+    color: #64748b;
+    margin-bottom: 25px;
+}
+
+label {
+    display: block;
+    text-align: left;
+    font-weight: bold;
+    margin: 15px 0 7px;
+}
+
+select,
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #cbd5e1;
+    border-radius: 12px;
+    font-size: 16px;
+    background: white;
+}
+
+button {
+    width: 100%;
+    margin-top: 20px;
+    padding: 15px;
+    border: none;
+    border-radius: 12px;
+    background: #4f46e5;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #4338ca;
+}
+
+button:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+}
+
+.info {
+    margin-top: 20px;
+    padding: 12px;
+    background: #f1f5f9;
+    border-radius: 12px;
+    font-size: 13px;
+    color: #475569;
+}
+
+.error {
+    margin-top: 15px;
+    padding: 12px;
+    background: #fee2e2;
+    color: #991b1b;
+    border-radius: 12px;
+    display: none;
+}
+
+.result {
+    display: none;
+    margin-top: 25px;
+    padding: 25px;
+    background: #eef2ff;
+    border-radius: 18px;
+}
+
+.result-title {
+    font-size: 15px;
+    color: #64748b;
+}
+
+.result-name {
+    font-size: 27px;
+    font-weight: bold;
+    color: #312e81;
+    margin-top: 10px;
+}
+
+.warning {
+    display: none;
+    margin-top: 20px;
+    padding: 15px;
+    background: #fff7ed;
+    color: #9a3412;
+    border-radius: 12px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<div class="card">
+
+<div class="icon">🎁</div>
+
+<h1>Amigo Secreto</h1>
+
+<p class="subtitle">
+Descubre a quién debes regalarle
+</p>
+
+<div id="formulario">
+
+<label for="persona">
+¿Quién eres?
+</label>
+
+<select id="persona">
+
+<option value="">
+Selecciona tu nombre
+</option>
+
+<option>Ramon rojas</option>
+<option>Yesid mantilla</option>
+<option>Edwin rueda</option>
+<option>pedro paredes</option>
+<option>alexis mesa</option>
+<option>nestor garcia</option>
+<option>Hugo duran</option>
+<option>Jhonattan Siza</option>
+<option>Roger Florez</option>
+
+<option>Yuri noriega</option>
+<option>angelica parada</option>
+<option>carolina niño</option>
+<option>karen zoonosis</option>
+<option>karen martinez</option>
+<option>laura marcela</option>
+<option>luz herminda</option>
+<option>maria isnelda</option>
+<option>nathaly pedroza</option>
+<option>constanza silva</option>
+<option>angelica archivo</option>
+<option>angelica reyes</option>
+<option>johana carreño</option>
+<option>nini jhoana</option>
+<option>Sayra cristina</option>
+<option>yesenia delgado</option>
+<option>yuly florez</option>
+
+</select>
+
+<label for="codigo">
+Código personal
+</label>
+
+<input
+    id="codigo"
+    type="text"
+    maxlength="6"
+    placeholder="Ingresa tu código"
+    autocomplete="off"
+>
+
+<button id="boton" onclick="consultar()">
+🎁 DESCUBRIR MI AMIGO SECRETO
+</button>
+
+<div id="error" class="error"></div>
+
+<div class="info">
+🔒 Tu resultado es privado.<br>
+Una vez consultado, no podrás volver a consultarlo.
+</div>
+
+</div>
+
+<div id="result" class="result">
+
+<div class="result-title">
+🎉 Tu amigo secreto es:
+</div>
+
+<div id="nombreResultado" class="result-name"></div>
+
+<p>
+¡No olvides mantenerlo en secreto! 🤫
+</p>
+
+</div>
+
+<div id="warning" class="warning">
+🔒 Este participante ya consultó su amigo secreto.
+</div>
+
+</div>
+
+</div>
+
+<script>
+
+const SUPABASE_URL =
+"https://opnaqgzedpgdhhxjoogq.supabase.co";
+
+const SUPABASE_KEY =
+"sb_publishable_t-6SaHoNi3kdm2UmgUTl-Q_luhD1x5U";
+
+const supabaseClient =
+supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+
+async function consultar() {
+
+    const nombre =
+        document.getElementById("persona").value;
+
+    const codigo =
+        document.getElementById("codigo").value.trim();
+
+    const boton =
+        document.getElementById("boton");
+
+    const error =
+        document.getElementById("error");
+
+    const resultado =
+        document.getElementById("result");
+
+    const warning =
+        document.getElementById("warning");
+
+    error.style.display = "none";
+    resultado.style.display = "none";
+    warning.style.display = "none";
+
+    if (!nombre) {
+
+        mostrarError(
+            "Selecciona tu nombre."
+        );
+
+        return;
+    }
+
+    if (codigo.length !== 6) {
+
+        mostrarError(
+            "Introduce tu código personal de 6 caracteres."
+        );
+
+        return;
+    }
+
+    boton.disabled = true;
+
+    boton.textContent =
+        "Consultando...";
+
+
+    try {
+
+        const { data, error: supabaseError } =
+            await supabaseClient.rpc(
+                "consultar_amigo",
+                {
+                    p_name: nombre,
+                    p_code: codigo
+                }
+            );
+
+
+        if (supabaseError) {
+            throw supabaseError;
+        }
+
+
+        if (!data || data.length === 0) {
+
+            mostrarError(
+                "No se encontró el participante."
+            );
+
+            boton.disabled = false;
+            boton.textContent =
+                "🎁 DESCUBRIR MI AMIGO SECRETO";
+
+            return;
+        }
+
+
+        const persona = data[0];
+
+
+        if (
+            persona.amigo_secreto ===
+            "YA CONSULTADO"
+        ) {
+
+            warning.style.display =
+                "block";
+
+            boton.disabled = true;
+
+            boton.textContent =
+                "Ya consultado";
+
+            return;
+        }
+
+
+        document.getElementById(
+            "nombreResultado"
+        ).textContent =
+            persona.amigo_secreto;
+
+
+        resultado.style.display =
+            "block";
+
+
+        boton.disabled = true;
+
+        boton.textContent =
+            "✅ Resultado consultado";
+
+    }
+
+    catch (e) {
+
+        console.error(e);
+
+        mostrarError(
+            e.message ||
+            "No fue posible consultar el resultado."
+        );
+
+        boton.disabled = false;
+
+        boton.textContent =
+            "🎁 DESCUBRIR MI AMIGO SECRETO";
+    }
+
+}
+
+
+function mostrarError(texto) {
+
+    const error =
+        document.getElementById("error");
+
+    error.textContent =
+        texto;
+
+    error.style.display =
+        "block";
+}
+
+</script>
+
+</body>
+</html>
