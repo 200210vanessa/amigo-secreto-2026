@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -59,8 +60,7 @@ label {
     margin: 15px 0 7px;
 }
 
-select,
-input {
+select {
     width: 100%;
     padding: 14px;
     border: 1px solid #cbd5e1;
@@ -196,18 +196,6 @@ Selecciona tu nombre
 
 </select>
 
-<label for="codigo">
-Código personal
-</label>
-
-<input
-    id="codigo"
-    type="text"
-    maxlength="6"
-    placeholder="Ingresa tu código"
-    autocomplete="off"
->
-
 <button id="boton" onclick="consultar()">
 🎁 DESCUBRIR MI AMIGO SECRETO
 </button>
@@ -263,9 +251,6 @@ async function consultar() {
     const nombre =
         document.getElementById("persona").value;
 
-    const codigo =
-        document.getElementById("codigo").value.trim();
-
     const boton =
         document.getElementById("boton");
 
@@ -282,6 +267,7 @@ async function consultar() {
     resultado.style.display = "none";
     warning.style.display = "none";
 
+
     if (!nombre) {
 
         mostrarError(
@@ -291,14 +277,6 @@ async function consultar() {
         return;
     }
 
-    if (codigo.length !== 6) {
-
-        mostrarError(
-            "Introduce tu código personal de 6 caracteres."
-        );
-
-        return;
-    }
 
     boton.disabled = true;
 
@@ -312,8 +290,7 @@ async function consultar() {
             await supabaseClient.rpc(
                 "consultar_amigo",
                 {
-                    p_name: nombre,
-                    p_code: codigo
+                    p_name: nombre
                 }
             );
 
@@ -330,6 +307,7 @@ async function consultar() {
             );
 
             boton.disabled = false;
+
             boton.textContent =
                 "🎁 DESCUBRIR MI AMIGO SECRETO";
 
@@ -408,3 +386,4 @@ function mostrarError(texto) {
 
 </body>
 </html>
+```
